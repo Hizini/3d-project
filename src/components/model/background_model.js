@@ -1,15 +1,16 @@
 import React from "react";
 import { useGLTF } from "@react-three/drei";
 
-export function BackGroundModel(props) {
+export function BackGroundModel({ backgroundRef }) {
     const { nodes, materials } = useGLTF("/assets/background/scene.gltf");
     return (
-        <group {...props} dispose={null}>
+        <group dispose={null}>
             <group scale={0.01}>
                 <group rotation={[-Math.PI / 2, 0, 0]} scale={[50, 50, 22.5]}>
                     <mesh
                         geometry={nodes.Walls_Walls_0.geometry}
                         material={materials.Walls}
+						ref={backgroundRef}
                     />
                     <mesh
                         geometry={nodes.Walls_Ceilling_0.geometry}

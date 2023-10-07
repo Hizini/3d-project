@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import React, { useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
 import { Stats } from "@react-three/drei";
@@ -13,6 +14,9 @@ const StyledMain = styled.main`
 
 const Project = () => {
     const isTest = true;
+    const backgroundRef = useRef();
+    const modelRef = useRef();
+	let wallRefArr
     return (
         <StyledMain className="main">
             <Canvas camera={{ position: [6, 2, 4] }} shadows>
@@ -20,8 +24,11 @@ const Project = () => {
                 {isTest && <Stats />}
                 {isTest && <gridHelper args={[10, 10]} />}
                 <Suspense fallback={<Loader />}>
-                    <BackGroundModel />
-                    <MainModel />
+                    <BackGroundModel backgroundRef={backgroundRef}/>
+                    <MainModel
+                        backgroundRef={backgroundRef}
+                        modelRef={modelRef}
+                    />
                     <ambientLight intensity={4} />
                 </Suspense>
             </Canvas>

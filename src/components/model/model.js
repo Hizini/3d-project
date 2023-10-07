@@ -39,8 +39,9 @@ const directionOffset = ({ forward, backward, left, right }) => {
 
     return directionOffset;
 };
+let backgroundSize;
 
-const MainModel = () => {
+const MainModel = ({ backgroundRef, modelRef }) => {
     const model = useGLTF("./assets/model.glb");
     const { actions } = useAnimations(model.animations, model.scene);
     const { forward, backward, left, right, shift, jump } = useInput();
@@ -62,6 +63,14 @@ const MainModel = () => {
     };
 
     useEffect(() => {
+        let bbox = new THREE.Box3().setFromObject(backgroundRef.current);
+        let helper = new THREE.Box3Helper(bbox, new THREE.Color(0, 255, 0));
+        backgroundSize = bbox.getSize(new THREE.Vector3()); // HEREyou get the size
+        backgroundRef.current.add(helper);
+    }, [backgroundRef.current]);
+
+    useEffect(() => {
+        modelRef.current = model.scene;
         let minY = Infinity,
             maxY = -Infinity;
         model.scene.traverse((item) => {
@@ -145,6 +154,13 @@ const MainModel = () => {
             // 모델 & 카메라 이동
             const moveX = walkDirection.x * velocity * delta;
             const moveZ = walkDirection.z * velocity * delta;
+			const distance = Math.sqrt(
+                Math.pow(modelRef.current.position.x + moveX, 2) +
+                    Math.pow(modelRef.current.position.z + moveZ, 2)
+            );
+			const r = backgroundSize.x/2
+			// 거리가 원의 반지름보다 크거나 같으면 모델 & 카메라 이동 x
+			if( distance >= r) return
             model.scene.position.x += moveX;
             model.scene.position.z += moveZ;
             updateCameraTarget(moveX, moveZ);
