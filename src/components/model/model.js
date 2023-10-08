@@ -159,8 +159,13 @@ const MainModel = ({ backgroundRef, modelRef }) => {
                     Math.pow(modelRef.current.position.z + moveZ, 2)
             );
 			const r = backgroundSize.x/2
-			// 거리가 원의 반지름보다 크거나 같으면 모델 & 카메라 이동 x
-			if( distance >= r) return
+			const cannotMove =(model.scene.position.x + moveX < -3.87 &&  model.scene.position.x + moveX > -5.43 && model.scene.position.z + moveZ < 2.87 && model.scene.position.z + moveZ > -2.21)
+			|| (model.scene.position.x + moveX < 5.43 &&  model.scene.position.x + moveX > 3.87 && model.scene.position.z + moveZ < 2.21 && model.scene.position.z + moveZ > -2.87)
+			|| (model.scene.position.x + moveX < 3 &&  model.scene.position.x + moveX > -2.22 && model.scene.position.z + moveZ < 5.43 && model.scene.position.z + moveZ > 3.87)
+			|| (model.scene.position.x + moveX < 2.22 &&  model.scene.position.x + moveX > -3 && model.scene.position.z + moveZ < -3.87 && model.scene.position.z + moveZ > -5.43)
+			console.log(cannotMove)
+			// 거리가 원의 반지름 이상이거나 벽이 있으면 모델 & 카메라 이동 x
+			if( distance >= r || cannotMove) return
             model.scene.position.x += moveX;
             model.scene.position.z += moveZ;
             updateCameraTarget(moveX, moveZ);
