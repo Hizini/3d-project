@@ -64,9 +64,7 @@ const MainModel = ({ backgroundRef, modelRef }) => {
 
     useEffect(() => {
         let bbox = new THREE.Box3().setFromObject(backgroundRef.current);
-        let helper = new THREE.Box3Helper(bbox, new THREE.Color(0, 255, 0));
-        backgroundSize = bbox.getSize(new THREE.Vector3()); // HEREyou get the size
-        backgroundRef.current.add(helper);
+        backgroundSize = bbox.getSize(new THREE.Vector3());
     }, [backgroundRef.current]);
 
     useEffect(() => {
@@ -175,8 +173,12 @@ const MainModel = ({ backgroundRef, modelRef }) => {
                 (model.scene.position.x + moveX < 2.22 &&
                     model.scene.position.x + moveX > -3 &&
                     model.scene.position.z + moveZ < -3.87 &&
-                    model.scene.position.z + moveZ > -5.43);
-            // 거리가 원의 반지름 이상이거나 벽이 있으면 모델 & 카메라 이동 x
+                    model.scene.position.z + moveZ > -5.43) ||
+                (model.scene.position.x + moveX < 1.9 &&
+                    model.scene.position.x + moveX > -1.9 &&
+                    model.scene.position.z + moveZ < 0.75 &&
+                    model.scene.position.z + moveZ > -0.75);
+            // 거리가 원의 반지름 이상이거나 벽, 벤치가 있으면 모델 & 카메라 이동 x
             if (distance >= r || cannotMove) return;
             model.scene.position.x += moveX;
             model.scene.position.z += moveZ;
