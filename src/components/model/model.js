@@ -79,7 +79,7 @@ const MainModel = ({ backgroundRef, modelRef }) => {
             }
             const h = maxY - minY;
             setHeight(h);
-            model.scene.position.set(2.5, 0, 2);
+            model.scene.position.set(0,0,0);
         });
     }, [model.scene]);
 
@@ -152,34 +152,29 @@ const MainModel = ({ backgroundRef, modelRef }) => {
             // 모델 & 카메라 이동
             const moveX = walkDirection.x * velocity * delta;
             const moveZ = walkDirection.z * velocity * delta;
-            const distance = Math.sqrt(
-                Math.pow(modelRef.current.position.x + moveX, 2) +
-                    Math.pow(modelRef.current.position.z + moveZ, 2)
-            );
-            const r = backgroundSize.x / 2;
-            const cannotMove =
-                (model.scene.position.x + moveX < -3.87 &&
-                    model.scene.position.x + moveX > -5.43 &&
-                    model.scene.position.z + moveZ < 2.87 &&
-                    model.scene.position.z + moveZ > -2.21) ||
-                (model.scene.position.x + moveX < 5.43 &&
-                    model.scene.position.x + moveX > 3.87 &&
-                    model.scene.position.z + moveZ < 2.21 &&
-                    model.scene.position.z + moveZ > -2.87) ||
-                (model.scene.position.x + moveX < 3 &&
-                    model.scene.position.x + moveX > -2.22 &&
-                    model.scene.position.z + moveZ < 5.43 &&
-                    model.scene.position.z + moveZ > 3.87) ||
-                (model.scene.position.x + moveX < 2.22 &&
-                    model.scene.position.x + moveX > -3 &&
-                    model.scene.position.z + moveZ < -3.87 &&
-                    model.scene.position.z + moveZ > -5.43) ||
-                (model.scene.position.x + moveX < 1.9 &&
-                    model.scene.position.x + moveX > -1.9 &&
-                    model.scene.position.z + moveZ < 0.75 &&
-                    model.scene.position.z + moveZ > -0.75);
-            // 거리가 원의 반지름 이상이거나 벽, 벤치가 있으면 모델 & 카메라 이동 x
-            if (distance >= r || cannotMove) return;
+
+            // const cannotMove =
+            //     (model.scene.position.x + moveX < -3.87 &&
+            //         model.scene.position.x + moveX > -5.43 &&
+            //         model.scene.position.z + moveZ < 2.87 &&
+            //         model.scene.position.z + moveZ > -2.21) ||
+            //     (model.scene.position.x + moveX < 5.43 &&
+            //         model.scene.position.x + moveX > 3.87 &&
+            //         model.scene.position.z + moveZ < 2.21 &&
+            //         model.scene.position.z + moveZ > -2.87) ||
+            //     (model.scene.position.x + moveX < 3 &&
+            //         model.scene.position.x + moveX > -2.22 &&
+            //         model.scene.position.z + moveZ < 5.43 &&
+            //         model.scene.position.z + moveZ > 3.87) ||
+            //     (model.scene.position.x + moveX < 2.22 &&
+            //         model.scene.position.x + moveX > -3 &&
+            //         model.scene.position.z + moveZ < -3.87 &&
+            //         model.scene.position.z + moveZ > -5.43) ||
+            //     (model.scene.position.x + moveX < 1.9 &&
+            //         model.scene.position.x + moveX > -1.9 &&
+            //         model.scene.position.z + moveZ < 0.75 &&
+            //         model.scene.position.z + moveZ > -0.75);
+            // if (cannotMove) return;
             model.scene.position.x += moveX;
             model.scene.position.z += moveZ;
             updateCameraTarget(moveX, moveZ);
