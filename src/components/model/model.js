@@ -152,29 +152,49 @@ const MainModel = ({ backgroundRef, modelRef }) => {
             // 모델 & 카메라 이동
             const moveX = walkDirection.x * velocity * delta;
             const moveZ = walkDirection.z * velocity * delta;
+			
+			// 가장 큰 벽 경계 x, z 값
+			const boundary = {
+				minX: -18,
+				maxX: 21,
+				minZ: -13,
+				maxZ: 11
+			};
 
-            // const cannotMove =
-            //     (model.scene.position.x + moveX < -3.87 &&
-            //         model.scene.position.x + moveX > -5.43 &&
-            //         model.scene.position.z + moveZ < 2.87 &&
-            //         model.scene.position.z + moveZ > -2.21) ||
-            //     (model.scene.position.x + moveX < 5.43 &&
-            //         model.scene.position.x + moveX > 3.87 &&
-            //         model.scene.position.z + moveZ < 2.21 &&
-            //         model.scene.position.z + moveZ > -2.87) ||
-            //     (model.scene.position.x + moveX < 3 &&
-            //         model.scene.position.x + moveX > -2.22 &&
-            //         model.scene.position.z + moveZ < 5.43 &&
-            //         model.scene.position.z + moveZ > 3.87) ||
-            //     (model.scene.position.x + moveX < 2.22 &&
-            //         model.scene.position.x + moveX > -3 &&
-            //         model.scene.position.z + moveZ < -3.87 &&
-            //         model.scene.position.z + moveZ > -5.43) ||
-            //     (model.scene.position.x + moveX < 1.9 &&
-            //         model.scene.position.x + moveX > -1.9 &&
-            //         model.scene.position.z + moveZ < 0.75 &&
-            //         model.scene.position.z + moveZ > -0.75);
-            // if (cannotMove) return;
+			// 장애물 경계 x, z 값
+			const objArr = [
+				// 물체
+                { minX: -16.5, maxX: -10.5, minZ: -3, maxZ: 0 },
+                { minX: -7, maxX: -4, minZ: -3, maxZ: 0 },
+                { minX: 0, maxX: 6, minZ: -3, maxZ: 0 },
+                { minX: 8.5, maxX: 11.5, minZ: -3, maxZ: 0 },
+                { minX: 14.5, maxX: 20, minZ: -3, maxZ: 0 },
+
+				// 벽
+				{ minX: -17.5, maxX: -7, minZ: 3.5, maxZ: 11 },
+				{ minX: -3, maxX: 7.5, minZ: 3.5, maxZ: 11 },
+				{ minX: 12, maxX: 21, minZ: 3.5, maxZ: 11 },
+				{ minX: -17.5, maxX: 7.5, minZ: -13, maxZ: -6 },
+				{ minX: 12, maxX: 21, minZ: -13, maxZ: -6 },
+            ];
+
+			const modelX = model.scene.position.x + moveX
+			const modelZ = model.scene.position.z + moveZ
+            const cannotMove =
+                modelX < boundary.minX ||
+                modelX > boundary.maxX ||
+                modelZ < boundary.minZ ||
+                modelZ > boundary.maxZ ||
+                Object.values(objArr)
+                    .map(
+                        (item) =>
+                            modelX > item.minX &&
+                            modelX < item.maxX &&
+                            modelZ > item.minZ &&
+                            modelZ < item.maxZ
+                    )
+                    .some(Boolean);
+            if (cannotMove) return;
             model.scene.position.x += moveX;
             model.scene.position.z += moveZ;
             updateCameraTarget(moveX, moveZ);
