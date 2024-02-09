@@ -9,6 +9,7 @@ export const useInput = () => {
         shift: false,
         jump: false,
     });
+    const [jumping, setJumping] = useState(false);
 
     const keys = {
         KeyW: "forward",
@@ -21,14 +22,23 @@ export const useInput = () => {
 
     const findKey = (key) => keys[key];
 
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            setInput((m) => ({ ...m, [findKey(e.code)]: true }));
-        };
-        const handleKeyUp = (e) => {
-            setInput((m) => ({ ...m, [findKey(e.code)]: false }));
-        };
+    const handleKeyDown = (e) => {
+        if (findKey(e.code) === "jump") {
+            setJumping(true);
+        }
+        setInput((m) => ({ ...m, [findKey(e.code)]: true }));
+    };
+    const handleKeyUp = (e) => {
+        if (findKey(e.code) === "jump") {
+            const timer = setTimeout(() => {
+                setInput({ ...input, jump: false });
+                setJumping(false);
+            }, 1800);
+            return () => clearTimeout(timer);
+        } else setInput((m) => ({ ...m, [findKey(e.code)]: false }));
+    };
 
+    useEffect(() => {
         document.addEventListener("keydown", handleKeyDown);
         document.addEventListener("keyup", handleKeyUp);
         return () => {
@@ -36,5 +46,5 @@ export const useInput = () => {
             document.removeEventListener("keyup", handleKeyUp);
         };
     }, []);
-    return input;
+    return { input, jumping };
 };

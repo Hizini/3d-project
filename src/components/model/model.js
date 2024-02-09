@@ -44,7 +44,8 @@ let backgroundSize;
 const MainModel = ({ backgroundRef, modelRef }) => {
     const model = useGLTF("./assets/model.glb");
     const { actions } = useAnimations(model.animations, model.scene);
-    const { forward, backward, left, right, shift, jump } = useInput();
+    const { input, jumping } = useInput();
+    const { forward, backward, left, right, shift, jump } = input;
     const [height, setHeight] = useState(0);
     const currentAction = useRef("");
     const controlRef = useRef();
@@ -79,7 +80,7 @@ const MainModel = ({ backgroundRef, modelRef }) => {
             }
             const h = maxY - minY;
             setHeight(h);
-            model.scene.position.set(0,0,0);
+            model.scene.position.set(0, 0, 0);
         });
     }, [model.scene]);
 
@@ -95,6 +96,7 @@ const MainModel = ({ backgroundRef, modelRef }) => {
         }
 
         if (currentAction.current !== action) {
+            if (action !== "Jump" && jumping) return;
             const nextActionToPlay = actions[action];
             const current = actions[currentAction.current];
             current?.fadeOut(0.2);
@@ -152,34 +154,34 @@ const MainModel = ({ backgroundRef, modelRef }) => {
             // 모델 & 카메라 이동
             const moveX = walkDirection.x * velocity * delta;
             const moveZ = walkDirection.z * velocity * delta;
-			
-			// 가장 큰 벽 경계 x, z 값
-			const boundary = {
-				minX: -18,
-				maxX: 21,
-				minZ: -13,
-				maxZ: 11
-			};
 
-			// 장애물 경계 x, z 값
-			const objArr = [
-				// 물체
+            // 가장 큰 벽 경계 x, z 값
+            const boundary = {
+                minX: -18,
+                maxX: 21,
+                minZ: -13,
+                maxZ: 11,
+            };
+
+            // 장애물 경계 x, z 값
+            const objArr = [
+                // 물체
                 { minX: -16.5, maxX: -10.5, minZ: -3, maxZ: 0 },
                 { minX: -7, maxX: -4, minZ: -3, maxZ: 0 },
                 { minX: 0, maxX: 6, minZ: -3, maxZ: 0 },
                 { minX: 8.5, maxX: 11.5, minZ: -3, maxZ: 0 },
                 { minX: 14.5, maxX: 20, minZ: -3, maxZ: 0 },
 
-				// 벽
-				{ minX: -17.5, maxX: -7, minZ: 3.5, maxZ: 11 },
-				{ minX: -3, maxX: 7.5, minZ: 3.5, maxZ: 11 },
-				{ minX: 12, maxX: 21, minZ: 3.5, maxZ: 11 },
-				{ minX: -17.5, maxX: 7.5, minZ: -13, maxZ: -6 },
-				{ minX: 12, maxX: 21, minZ: -13, maxZ: -6 },
+                // 벽
+                { minX: -17.5, maxX: -7, minZ: 3.5, maxZ: 11 },
+                { minX: -3, maxX: 7.5, minZ: 3.5, maxZ: 11 },
+                { minX: 12, maxX: 21, minZ: 3.5, maxZ: 11 },
+                { minX: -17.5, maxX: 7.5, minZ: -13, maxZ: -6 },
+                { minX: 12, maxX: 21, minZ: -13, maxZ: -6 },
             ];
 
-			const modelX = model.scene.position.x + moveX
-			const modelZ = model.scene.position.z + moveZ
+            const modelX = model.scene.position.x + moveX;
+            const modelZ = model.scene.position.z + moveZ;
             const cannotMove =
                 modelX < boundary.minX ||
                 modelX > boundary.maxX ||
